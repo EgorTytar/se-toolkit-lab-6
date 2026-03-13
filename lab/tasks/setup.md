@@ -45,26 +45,31 @@
 ## 1. Required steps
 
 > [!IMPORTANT]
-> Some steps have the label `(UPD)`.
+> `(UPD)`
 >
 > These steps must be completed to get the right setup for this lab,
 > even if you have completed similar steps in the previous lab.
 
 > [!IMPORTANT]
-> Some steps have the label `(LOCAL)`.
+> Complete the steps with the label:
 >
-> These steps must be completed on your local machine (laptop).
+> - `(LOCAL)` - on your local machine (laptop).
+>
+> - `(VM)` - on your VM.
+>
+> - `(Telegram)` - in `Telegram`.
 
 > [!NOTE]
-> We provide the setup steps before all other tasks
-> so that TAs can help you resolve issues with the setup
-> during the lab.
+> We provide the hardest setup steps before all other tasks
+> so that TAs can help you resolve issues during the lab.
 >
 > Tasks are doable when you have the right setup.
 
 > [!NOTE]
 > This lab needs your university email, GitHub alias, and VM IP in the Autochecker bot <https://t.me/auchebot>.
+>
 > If you haven't registered, do so now.
+>
 > If you want to change something, contact your TA.
 
 ### 1.1. (UPD) Find a partner
