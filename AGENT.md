@@ -1,70 +1,51 @@
-# Agent Documentation
+## Tools
 
-## Overview
+The agent has two tools for interacting with the repository.
 
-This project implements a simple CLI agent that connects to a Large Language Model (LLM) using an OpenAI-compatible API.
+### list_files
 
-The agent receives a user question from the command line, sends it to an LLM, and returns a structured JSON response.
+Lists files and directories at a given path.
 
-Example: uv run agent.py “What does REST stand for?”
-{“answer”: “Representational State Transfer.”, “tool_calls”: []}
+Parameters:
+- path (string)
 
-## LLM Provider
+Returns:
+newline-separated file list.
 
-This agent uses the **Qwen Code API**.
+### read_file
 
-Model used:
+Reads the contents of a file in the repository.
 
-qwen3-coder-plus
+Parameters:
+- path (string)
 
-The API is OpenAI-compatible, allowing standard chat completion requests.
+Returns:
+file contents as text.
 
-## Configuration
+Both tools enforce path security and cannot access files outside the project directory.
 
-The agent reads configuration values from:
+---
 
-.env.agent.secret
+## Agentic Loop
 
-Required variables:
-LLM_API_KEY
-LLM_API_BASE
-LLM_MODEL
+The agent uses an iterative reasoning loop:
 
-Example:
-LLM_API_KEY=your_api_key
-LLM_API_BASE=https://api.qwen.ai/v1
-LLM_MODEL=qwen3-coder-plus
+1. Send the user question and tool schemas to the LLM.
+2. The LLM may return tool calls.
+3. The agent executes each tool locally.
+4. Tool results are added to the conversation.
+5. The updated conversation is sent back to the LLM.
+6. The loop continues until the LLM returns a final answer.
 
-## How the Agent Works
+A maximum of 10 tool calls is allowed.
 
-1. The user provides a question as a CLI argument.
-2. The program loads environment variables.
-3. A request is sent to the LLM chat completions API.
-4. The LLM generates an answer.
-5. The program outputs structured JSON.
+---
 
-Output format:
-{
-“answer”: “…”,
-“tool_calls”: []
-}
-## Output Rules
+## System Prompt Strategy
 
-- Only JSON is written to stdout.
-- Debug and errors are written to stderr.
-- Exit code 0 on success.
+The system prompt instructs the LLM to:
 
-## Running the Agent
-
-Example command:
-uv run agent.py “What is HTTP?”
-
-## Testing
-
-Run the regression tests with:
-
-pytest
-
-The tests verify that the agent returns valid JSON with the required fields.
-
-
+- explore the `wiki/` directory using `list_files`
+- read documentation files using `read_file`
+- locate the section that answers the question
+- return an answer with a source reference
