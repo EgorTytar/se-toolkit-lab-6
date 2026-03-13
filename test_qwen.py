@@ -1,19 +1,25 @@
-import json
-import subprocess
-
-
-def test_agent_output_structure():
+def test_merge_conflict_question():
     result = subprocess.run(
-        ["uv", "run", "agent.py", "What does REST stand for?"],
+        ["uv", "run", "agent.py", "How do you resolve a merge conflict?"],
         capture_output=True,
         text=True,
-        timeout=60,
+        timeout=60
     )
-
-    assert result.returncode == 0
 
     data = json.loads(result.stdout)
 
-    assert "answer" in data
     assert "tool_calls" in data
-    assert isinstance(data["tool_calls"], list)
+    assert any(tc["tool"] == "read_file" for tc in data["tool_calls"])
+
+
+def test_list_files_question():
+    result = subprocess.run(
+        ["uv", "run", "agent.py", "What files are in the wiki?"],
+        capture_output=True,
+        text=True,
+        timeout=60
+    )
+
+    data = json.loads(result.stdout)
+
+    assert any(tc["tool"] == "list_files" for tc in data["tool_calls"])
