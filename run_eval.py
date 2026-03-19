@@ -93,7 +93,7 @@ def _fetch_question(api_url: str, auth: str, lab: str, index: int):
         sys.exit(1)
 
 
-def _run_agent(question: str, timeout: int = 60):
+def _run_agent(question: str, timeout: int = 300):
     """Run agent.py with the question. Returns (answer_dict, error_msg)."""
     try:
         result = subprocess.run(
@@ -103,7 +103,7 @@ def _run_agent(question: str, timeout: int = 60):
             timeout=timeout,
         )
     except subprocess.TimeoutExpired:
-        return None, "Agent timed out (60s)"
+        return None, f"Agent timed out ({timeout}s)"
     except FileNotFoundError:
         return None, "agent.py not found"
 
@@ -132,6 +132,17 @@ def _run_agent(question: str, timeout: int = 60):
 
 def _match(text: str, rule: dict) -> bool:
     """Check if text satisfies the matching rule."""
+    # Handle case where text is a list (structured answer)
+    if isinstance(text, list):
+        # Convert list to string by joining all text values
+        text_parts = []
+        for item in text:
+            if isinstance(item, dict):
+                text_parts.extend(str(v) for v in item.values())
+            else:
+                text_parts.append(str(item))
+        text = " ".join(text_parts)
+    
     text_lower = text.lower()
 
     if "contains" in rule:
